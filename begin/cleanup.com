@@ -1,0 +1,9 @@
+rm -f *.eig
+rm -f *state*
+rm -f NA*
+rm -f *.pp
+rm -f *.ewf*
+rm -f *.wf*
+rm -f *.na*
+rm -f *.ena*
+rm -f *.log
