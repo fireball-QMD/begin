@@ -36,6 +36,9 @@ Usage
           014_540.na0
           014_540.na2
           014_540.wf2
-        which will be used in the next step of a Fireball simulation. Copy
-        these files to a directory.
+        which contain the neutral atom potentials and radial orbitals 
+        to be used in a next step to determine various matrix elements.
+        See project "create" to create the interpolation of matrix elements.
+        
+        git clone https://github.com/fireball-QMD/create
         
