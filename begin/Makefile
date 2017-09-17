@@ -1,6 +1,6 @@
 #WARNING: Trailing spaces will mess up the variables
-#Pick your machine type: SGI, AIX, LINUX
-MACHINE = ILINUX
+#Pick your machine type: SGI, AIX, LINUX, GLinux (i.e. GNU compilers on Linux) ILINUX (i.e. Intel compilers on Linux)
+MACHINE = GLINUX
 #Define debug to turn on symbols and array checking: <blank for none>, TRUE
 DEBUG = TRUE 
 
@@ -27,6 +27,15 @@ ifeq (${MACHINE},LINUX)
         OPTIMIZATION = -O1
         LFLAGS =
 endif
+
+#GLINUX GLINUX GLINUX GLINUX GLINUX GLINUX GLINUX GLINUX GLINUX GLINUX
+ifeq (${MACHINE},GLINUX)
+        F90 = gfortran
+	F77 = ${F90}
+        OPTIMIZATION = -O1
+        LFLAGS =
+endif
+
 
 #ILINUX ILINUX ILINUX ILINUX ILINUX ILINUX ILINUX ILINUX ILINUX ILINUX
 ifeq (${MACHINE},ILINUX)

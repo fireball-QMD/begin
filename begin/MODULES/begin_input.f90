@@ -2,46 +2,50 @@
           use precision 
    
           integer, parameter :: ioption =  3
-          integer, parameter :: nexcite = 1
-          integer, parameter :: nssh = 1
+          integer, parameter :: nexcite = 0
+          integer, parameter :: nssh = 2
    
-          integer, parameter :: nznuc =  1
-          integer, parameter :: nzval =  1
+          integer, parameter :: nznuc = 14
+          integer, parameter :: nzval =  4
           integer, parameter :: nzval_ion =  0
    
           integer, dimension (nssh), parameter ::                           &
-     &     lam = (/ 0/)
+     &     lam = (/ 0, 1/)
    
           real(kind=long), dimension (nssh), parameter ::                   &
-     &     a0 = (/ 2.0000/)
+     &     a0 = (/ 2.0000, 1.0000/)
           real(kind=long), dimension (nssh), parameter ::                   &
-     &     rcutoff = (/ 3.800/)
+     &     rcutoff = (/ 4.800, 5.400/)
           real(kind=long), dimension (nssh), parameter ::                   &
-     &     rcut_ion = (/ 3.800/)
+     &     rcut_ion = (/ 4.800, 5.400/)
           real(kind=long), dimension (nssh), parameter ::                   &
-     &     xocc = (/ 1.00/)
+     &     xocc = (/ 2.00, 2.00/)
           real(kind=long), dimension (nssh), parameter ::                   &
-     &     xocc_ion = (/ 0.00/)
+     &     xocc_ion = (/ 0.00, 0.00/)
    
-          character(len=10), parameter :: atomname = 'Hydrogen  '
-          character(len=8), parameter :: ppfile = '001.pp  '
-          character(len=8), parameter :: ppionfile = '001++.pp'
+          character(len=10), parameter :: atomname = 'Silicon   '
+          character(len=8), parameter :: ppfile = '014.pp  '
+          character(len=8), parameter :: ppionfile = '014++.pp'
    
           character(len=11), dimension (0:nssh), parameter ::               &
-     &     filename_na = (/'001_380.na0',                                   &
-     &                     '001_380.na1'/)
+     &     filename_na = (/'014_540.na0',                                   &
+     &                     '014_480.na1',                                   &
+     &                     '014_540.na2'/)
           character(len=12), dimension (nssh), parameter ::                 &
-     &     filename_ena = (/'001_380.ena1'/)
+     &     filename_ena = (/'014_480.ena1',                                 &
+     &                      '014_540.ena2'/)
           character(len=11), dimension (nssh), parameter ::                 &
-     &     filename_wf = (/'001_380.wf1'/)
+     &     filename_wf = (/'014_480.wf1',                                   &
+     &                     '014_540.wf2'/)
           character(len=12), dimension (nssh), parameter ::                 &
-     &     filename_ewf = (/'001_380.ewf1'/)
+     &     filename_ewf = (/'014_480.ewf1',                                 &
+     &                      '014_540.ewf2'/)
           integer, parameter :: ioptim =  0
-          real(kind=long), dimension (2*nssh), parameter ::                   &
+          real(kind=long), dimension (nssh), parameter ::                   &
      &     Vo = (/    0.0000,    0.0000/)
-          real(kind=long), dimension (2*nssh), parameter ::                   &
+          real(kind=long), dimension (nssh), parameter ::                   &
      &     r0 = (/ 0.00, 0.00/)
           real(kind=long), dimension (nssh), parameter ::                   &
-     &     cmix = (/ 1.00/)
+     &     cmix = (/ 1.00, 1.00/)
    
          end module 

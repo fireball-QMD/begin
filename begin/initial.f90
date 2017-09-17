@@ -111,7 +111,7 @@
         logical fshell
 
 ! w.f. optimization
-        logical ioptim
+        integer ioptim
         real(kind=long), dimension (:), allocatable :: r0
         real(kind=long), dimension (:), allocatable :: Vo        
         real(kind=long), dimension (:), allocatable :: cmix        
