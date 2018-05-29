@@ -851,7 +851,7 @@ allocate (xx(mesh))
 ! charges xocc for the calculation of NA_potential
 !JOM
 !         write (14,104) rcutoff_psirc(issh), rc_max, zero
-         write (14,104) rc_long, rc_max, xocc(issh)
+         write (14,104) rc_long, rc_max, 0.0d0
          write (14,105) lam(issh)
 
 ! Find (approximately) the value at r=0
