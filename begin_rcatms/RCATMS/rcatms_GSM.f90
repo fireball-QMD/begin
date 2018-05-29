@@ -632,9 +632,27 @@
           integral =                                                         &
            integral + rmult(ipoint)*psi_new(issh,ipoint)**2
          end do
-	write (*,*) ' OVERLAP GS-GS = 1 ?', integral
+        write (*,*) ' OVERLAP GS-GS = 1 ?', integral
         end do
 
+!NOW DEFINE PSI_1_new by orthornomalizing psi
+!First compute the overlap
+      integral = 0.0d0
+         do ipoint = 1, mesh_new
+          integral =  integral + rmult(ipoint)*psi_new(issh,ipoint)*psi(issh,ipoint) 
+         end do
+
+! Now orthogonalize by taking psi1_new = psi1_old - sum*psi0
+         do ipoint = 1, mesh_new
+          psi1_new(issh,ipoint) = psi(issh,ipoint) -integral*psi_new(issh,ipoint)
+         end do
+
+!next normalize psi1_new
+      integral = 0.0d0
+         do ipoint = 1, mesh_new
+          integral =  integral + rmult(ipoint)*psi1_new(issh,ipoint)*psi1_new(issh,ipoint)
+         end do
+      psi1_new(issh,1:mesh_new) = psi1_new(issh,1:mesh_new)/sqrt(integral)
 !JOM: Standard DMOL would do the following:
 !! ***************************************************************************
 !!       O R T H O G O N A L I Z E
@@ -725,7 +743,7 @@
 !JOM
 !         open (unit = 14, file = filename_ewf(issh), status = 'unknown')
          open (unit = 14, file = filename_wf(issh), status = 'unknown')
-         write (14,101) filename_ewf(issh)
+         write (14,101) filename_wf(issh)
          write (14,102) nznuc, atomname
          write (14,103) mesh_new
          zero = 0.0d0
@@ -772,45 +790,113 @@
           close (unit = 14)
 
 ! Write out the wavefunctions for plotting purposes.
-!dani.         if (l .eq. 0) open (unit = 17, file = 'sstate1', status = 'unknown')
-!dani.         if (l .eq. 1) open (unit = 17, file = 'pstate1', status = 'unknown')
-!dani.         if (l .eq. 2) open (unit = 17, file = 'dstate1', status = 'unknown')
-!dani.         if (l .eq. 3) open (unit = 17, file = 'fstate1', status = 'unknown')
+!dani         if (l .eq. 0) open (unit = 17, file = 'sstate1', status = 'unknown')
+!dani         if (l .eq. 1) open (unit = 17, file = 'pstate1', status = 'unknown')
+!dani         if (l .eq. 2) open (unit = 17, file = 'dstate1', status = 'unknown')
+!dani         if (l .eq. 3) open (unit = 17, file = 'fstate1', status = 'unknown')
 !
 ! JOM plot original excited states (without orthogonalization)
-!dani.         if (l .eq. 0) open (unit = 18, file = 'sstate10', status = 'unknown')
-!dani.         if (l .eq. 1) open (unit = 18, file = 'pstate10', status = 'unknown')
-!dani.         if (l .eq. 2) open (unit = 18, file = 'dstate10', status = 'unknown')
-!dani.         if (l .eq. 3) open (unit = 18, file = 'fstate10', status = 'unknown')
+!dani         if (l .eq. 0) open (unit = 18, file = 'sstate10', status = 'unknown')
+!dani         if (l .eq. 1) open (unit = 18, file = 'pstate10', status = 'unknown')
+!dani         if (l .eq. 2) open (unit = 18, file = 'dstate10', status = 'unknown')
+!dani         if (l .eq. 3) open (unit = 18, file = 'fstate10', status = 'unknown')
 !
 ! JOM comment: in these plots the units are not consistent: r(a.u.),yy(A^(-1.5))
 !
 !JOM
 ! JOM plot OPTIMIZED  states
 	mesh_new = max(mesh_gs(issh),mesh_psirc(issh))
-!dani.         do ipoint = 1, mesh_new
-!dani.          write (17,401) r(ipoint), yy(ipoint)
+!dani         do ipoint = 1, mesh_new
+!dani          write (17,401) r(ipoint), yy(ipoint)
 !          write (17,401) r(ipoint), psi_new(issh,ipoint)
-!dani.         end do
+!dani         end do
 !
 ! JOM plot DMOL  states
-!dani.         do ipoint = 2, mesh_new
-!dani.          write (18,401) r(ipoint), psi(issh,ipoint)/(abohr15*r(ipoint))
+!dani         do ipoint = 2, mesh_new
+!dani          write (18,401) r(ipoint), psi(issh,ipoint)/(abohr15*r(ipoint))
 !          write (18,401) r(ipoint), psi(issh,ipoint)
-!dani.         end do
-!dani.         close (unit = 17)
-!dani.         close (unit = 18)
+!dani         end do
+!dani         close (unit = 17)
+!dani         close (unit = 18)
         end do
         deallocate (xx)
         deallocate (yy)
 
-!JOM 
+!JOM
+
+!WRITE EXCITED WAVEFUNCTION (NEW)
+allocate (xx(mesh))
+        allocate (yy(mesh))
+        do issh = 1, nssh
+!JOM
+!         mesh_new = mesh_psirc(issh)
+         mesh_new = max(mesh_psirc(issh),mesh_gs(issh))
+         l = lam(issh)
+!JOM
+!         open (unit = 14, file = filename_ewf(issh), status =
+!         'unknown')
+         open (unit = 14, file = filename_ewf(issh), status = 'unknown')
+         write (14,101) filename_ewf(issh)
+         write (14,102) nznuc, atomname
+         write (14,103) mesh_new
+         zero = 0.0d0
+!JOM
+         rc_long = max(rcutoff_psirc(issh),rcutoff_gs(issh))
+!
+! charges xocc for the calculation of NA_potential
+!JOM
+!         write (14,104) rcutoff_psirc(issh), rc_max, zero
+         write (14,104) rc_long, rc_max, xocc(issh)
+         write (14,105) lam(issh)
+
+! Find (approximately) the value at r=0
+         xx(2) = r(2)*abohr
+         xx(3) = r(3)*abohr
+
+         yy(2) = psi1_new(issh,2)/(abohr15*r(2))
+         yy(3) = psi1_new(issh,3)/(abohr15*r(3))
+
+         slope = (yy(3) - yy(2))/(xx(3) - xx(2))
+         xx(1) = 0.0d0
+         yy(1) = - slope*xx(2) + yy(2)
+
+         xx(4:mesh_new-1) = r(4:mesh_new-1)*abohr
+         yy(4:mesh_new-1) = psi1_new(issh,4:mesh_new-1)/(abohr15*r(4:mesh_new-1))
+
+         xx(mesh_new) = r(mesh_new)*abohr
+         yy(mesh_new) = 0.0d0
+
+         inum = idint(real(mesh_new)/4.0d0)
+         iremainder = mesh_new - (inum*4)
+
+         do jpoint = 1, mesh_new - iremainder,4
+          write (14,400) yy(jpoint), yy(jpoint+1), yy(jpoint+2), yy(jpoint+3)
+         end do
+
+         if (iremainder .eq. 1) then
+          write (14,400) yy(mesh_new)
+         else if (iremainder .eq. 2) then
+          write (14,400) yy(mesh_new-1), yy(mesh_new)
+         else if (iremainder .eq. 3) then
+          write (14,400) yy(mesh_new-2), yy(mesh_new-1), yy(mesh_new)
+         end if
+          close (unit = 14)
+
+!
+!
+!
+        mesh_new = max(mesh_gs(issh),mesh_psirc(issh))
+        end do
+        deallocate (xx)
+        deallocate (yy)
+
+
+ 
 ! ***************************************************************************
 ! NOW CALCULATE NEW POTENTIALS FOR THE NEW GS-ORBITALS
 ! ***************************************************************************
 !        call vnn_excite
 ! I replace etotatom here by zero
-!dani.JOM
 !        call vnn (zero)
 
         write (*,*) ' Bye from RCATMS_DMOL! '
