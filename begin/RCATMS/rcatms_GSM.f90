@@ -125,6 +125,7 @@
         real(kind=long), dimension (:), allocatable :: eigenvalue
         real(kind=long), dimension (:, :), allocatable :: psi
         real(kind=long), dimension (:, :), allocatable :: psi_new
+        real(kind=long), dimension (:, :), allocatable :: psi1_new
         real(kind=long), dimension (mesh) :: psi0
         real(kind=long), dimension (nssh, mesh) :: Rall
         real(kind=long), dimension (mesh) :: rho
@@ -156,6 +157,7 @@
         allocate (eigenvalue(nssh))
         allocate (psi(nssh,mesh))
         allocate (psi_new(nssh,mesh))
+        allocate (psi1_new(nssh,mesh))
         allocate (uxc_local(nssh))
         allocate (vkin_local(nssh))
         allocate (vl(nssh,mesh))
@@ -181,6 +183,7 @@
 ! Initialize the wavefunctions and the exact exchange potential.
         psi = 0.0d0
         psi_new = 0.0d0
+        psi1_new = 0.0d0
         vexx = 0.0d0
 
 ! Get the Clebsch Gordan Coefficients.
@@ -555,7 +558,7 @@
         write (*,*) '  '
 
 ! Now write out wavefunction
-        write (*,*) ' This program writes out the following data files: '
+        write (*,*) ' This program writes out the following data files:'
         write (*,*) '  '
         write (*,*) '  '
         write (*,*) ' s.wf [p.wf...]  u_s(r) [u_p...] r=100 points '
@@ -633,10 +636,11 @@
            integral + rmult(ipoint)*psi_new(issh,ipoint)**2
          end do
         write (*,*) ' OVERLAP GS-GS = 1 ?', integral
-        end do
+       
 
 !NOW DEFINE PSI_1_new by orthornomalizing psi
 !First compute the overlap
+ 
       integral = 0.0d0
          do ipoint = 1, mesh_new
           integral =  integral + rmult(ipoint)*psi_new(issh,ipoint)*psi(issh,ipoint) 
@@ -653,6 +657,7 @@
           integral =  integral + rmult(ipoint)*psi1_new(issh,ipoint)*psi1_new(issh,ipoint)
          end do
       psi1_new(issh,1:mesh_new) = psi1_new(issh,1:mesh_new)/sqrt(integral)
+      end do
 !JOM: Standard DMOL would do the following:
 !! ***************************************************************************
 !!       O R T H O G O N A L I Z E
@@ -897,7 +902,7 @@ allocate (xx(mesh))
 ! ***************************************************************************
 !        call vnn_excite
 ! I replace etotatom here by zero
-        call vnn (zero)
+!        call vnn (zero)
 
         write (*,*) ' Bye from RCATMS_DMOL! '
         write (*,*) '  '
