@@ -902,7 +902,7 @@ allocate (xx(mesh))
 ! ***************************************************************************
 !        call vnn_excite
 ! I replace etotatom here by zero
-!        call vnn (zero)
+        call vnn (zero)
 
         write (*,*) ' Bye from RCATMS_DMOL! '
         write (*,*) '  '

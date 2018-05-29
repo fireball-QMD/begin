@@ -3,6 +3,7 @@
 
 
 #./begin.sh -ex 9 -z 001 -ele H -mass 1.0079 -orb s -excited 3 1.00 0.95 -n 1.00 -n0 1.00 -r 4.00
+#./begin.sh -ex 9 -z 001 -ele H -mass 1.0079 -orb s -excited 4 1.00 0.95 -n 1.00 -n0 1.00 -r 4.00
 #./begin.sh -ex 9 -z 006 -ele C -mass 12.011 -orb s -n 2.00 -n0 1.00 -r 4.00 -orb p -n 0.80 -n0 3.00 -r 4.50
 #./begin.sh -ex 9 -z 007 -ele N -mass 14.0067 -orb s -n 2.00 -n0 2.00 -r 4.00 -orb p -n 2.00 -n0 3.00 -r 4.50
 #./begin.sh -ex 9 -z 008 -ele O -mass 15.9994 -orb s -n 2.00 -n0 2.00 -r 3.70 -orb p -n 4.00 -n0 4.00 -r 4.20
@@ -27,7 +28,7 @@ if [[ $i == '-ex' ]] ; then  ex=$2 ; shift 2 ; fi
 if [[ $i == '-ele' ]] ; then  ele=$2 ; shift 2 ; fi
 if [[ $i == '-mass' ]] ; then  mass=$2 ; shift 2 ; fi
 if [[ $i == '-excited' ]] ; then excited=Y;  opEXC=$2 ;  shift 2 ; 
-  if [[ $opEXC == 3 ]] ; then 
+  if [[ $opEXC == 3 || $opEXC == 4 ]] ; then 
      if [[ $o > 0 ]] ; then ns_mix=$1 ; mixs=$2 ; shift 2; fi  
      if [[ $o > 1 ]] ; then np_mix=$1 ; mixp=$2 ; shift 2;  fi  
      if [[ $o > 2 ]] ; then nd_mix=$1 ; mixd=$2 ; shift 2;  fi
@@ -115,7 +116,7 @@ if [[ $opEXC == 2 ]] ; then
  auxexcited=Y$'\n'2$'\n'$(echo ${n[1]}-0 | bc -l)
  #ns=1 Z=1 y nse=1 con Z++=3
  fi
- if [[ $opEXC == 3 ]];  then
+ if [[ $opEXC == 3 ||  $opEXC == 4 ]];  then
  auxexcited=Y$'\n'3$'\n'$ns_mix$'\n'$mixs
  fi
 fi
@@ -148,7 +149,7 @@ if [[ $excited == Y ]]; then
  then
   auxexcited=Y$'\n'2$'\n'$(echo ${n[1]}-1 | bc -l)$'\n'$(echo ${n[2]}-1 | bc -l)
  fi
- if [[ $opEXC == 3 ]];  then
+ if [[ $opEXC == 3 ||  $opEXC == 4 ]];  then
   auxexcited=Y$'\n'3$'\n'$ns_mix$'\n'$np_mix$'\n'$mixs$'\n'$mixp
  fi
 fi
@@ -185,7 +186,7 @@ if [[ $excited == Y ]]; then
  then
   auxexcited=Y$'\n'2$'\n'$(echo ${n[1]}-1 | bc -l)$'\n'$(echo ${n[2]}-1 | bc -l)$'\n'$(echo ${n[3]}-1 | bc -l)
  fi
- if [[ $opEXC == 3 ]];  then
+ if [[ $opEXC == 3 ||  $opEXC == 4 ]];  then
   auxexcited=Y$'\n'3$'\n'$ns_mix$'\n'$np_mix$'\n'$nd_mix$'\n'$mixs$'\n'$mixp$'\n'$mixd
  fi
 fi
@@ -362,6 +363,11 @@ mv ../cinput/* .
 if [[ $pp = TRUE ]]
 then
 cp ../${z}.pp.back ${z}.pp
+fi
+
+if [[  $opEXC == 4 ]] 
+then
+opEXC=2
 fi
 
 initial
