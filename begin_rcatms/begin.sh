@@ -111,7 +111,7 @@ if [[ $o == 1 ]]
 then
 if [[ $excited == Y ]]; then
 auxexcited=Y$'\n'1
-if [[ $opEXC == 2 ]] ; then
+if [[ $opEXC == 2 ||  $opEXC == 5 ]] ; then
  # auxexcited=Y$'\n'2$'\n'${n[1]}
  auxexcited=Y$'\n'2$'\n'$(echo ${n[1]}-0 | bc -l)
  #ns=1 Z=1 y nse=1 con Z++=3
@@ -145,7 +145,7 @@ if [[ $o == 2 ]]
 then
 if [[ $excited == Y ]]; then
  auxexcited=Y$'\n'1
- if [[ $opEXC == 2 ]]
+ if [[ $opEXC == 2 ||  $opEXC == 5 ]]
  then
   auxexcited=Y$'\n'2$'\n'$(echo ${n[1]}-1 | bc -l)$'\n'$(echo ${n[2]}-1 | bc -l)
  fi
@@ -182,7 +182,7 @@ if [[ $o == 3 ]]
 then
 if [[ $excited == Y ]]; then
  auxexcited=Y$'\n'1
- if [[ $opEXC == 2 ]]
+ if [[ $opEXC == 2 ||  $opEXC == 5 ]]
  then
   auxexcited=Y$'\n'2$'\n'$(echo ${n[1]}-1 | bc -l)$'\n'$(echo ${n[2]}-1 | bc -l)$'\n'$(echo ${n[3]}-1 | bc -l)
  fi
@@ -248,7 +248,12 @@ EOF
 
 if [[ $excited == Y &&  $opEXC != 3  ]]
 then
+if [[ $opEXC == 5 ]] 
+then
+echo $((o*2-1)) >> $ele.input
+else
 echo $((o*2)) >> $ele.input
+fi
 else
 echo $o >> $ele.input
 fi 
@@ -262,17 +267,24 @@ echo cinput/${z}_${aux_r[i]}.wf$i  >>  $ele.input
 echo cinput/${z}_${aux_r[i]}.na$i  >>  $ele.input
 done
 
+
+
 if [[ $excited == Y && $opEXC != 3 ]]
 then
 for((i=1;i<=$o;i++))
 do
+if [[ $opEXC != 5 || ${l[i]} != 1  ]]
+then
 echo ${l[i]} >>  $ele.input
 echo 0  >>  $ele.input
 echo ${r[i]}  >>  $ele.input
 echo cinput/${z}_${aux_r[i]}.ewf$i  >>  $ele.input
 echo cinput/${z}_${aux_r[i]}.ena$i  >>  $ele.input
+fi
 done
 fi
+
+
 echo 1 >> $ele.input
 echo 0.5 >>  $ele.input 
 echo '0.25 0.25 0.25 0.25 0.25 0.25' >>  $ele.input
