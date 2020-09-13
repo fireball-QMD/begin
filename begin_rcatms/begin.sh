@@ -14,6 +14,7 @@
 #  -ex 9 -z 006 -ele C -mass 12.011 -orb s -n 1.40 -n0 1.00 -r 4.00 -orb p -n 1.30 -n0 3.00 -r 4.50 -orb d -n 0.00 -n0 0.00 -r 4.50 -ion 0.50 0.00 0.00 
 #  -ex 9 -z 006 -ele C -mass 12.011 -excited 1 -orb s -n 1.40 -n0 1.00 -r 4.00 -orb p -n 1.30 -n0 3.00 -r 4.50 -orb d -n 0.00 -n0 0.00 -r 4.50 -ion 0.50 0.00 0.00 
 # -z 001 -pp 1.915 -ex 9 -ele H -mass 1.0079 -orb s -n 3.12 -n0 1 -r 4.00 
+#./begin.sh -z 032 -ele Ge -mass 72.640 -ex 9 -orb s -n 2.00 -n0 2.00 -r 5.50 -orb p -n 2.00 -n0 2.00 -r 5.50 -orb d -n 0.00 -n0 0.00 -r 5.50 -ionPP3 8
 
 
 ex=9
