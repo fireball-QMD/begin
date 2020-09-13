@@ -19,8 +19,14 @@
 ex=9
 o=0
 pp=FALSE
+ionPP1=FALSE
+ionPP2=FALSE
+ionPP3=FALSE
 excited=N
 here=$(pwd)
+
+echo ini >> log
+echo $0 $@ >> log
 for i in $@
 do
 if [[ $i == '-z' ]] ; then  z=$2 ; shift 2 ; fi
@@ -34,21 +40,11 @@ if [[ $i == '-excited' ]] ; then excited=Y;  opEXC=$2 ;  shift 2 ;
      if [[ $o > 2 ]] ; then nd_mix=$1 ; mixd=$2 ; shift 2;  fi
   fi
  fi
-# metemos dos parametros mas PP Z_pp ! no poner antes de leer Z
-if [[ $i == '-pp' ]]
-then
-echo hacemos PP $i
-Zpp_new=$2
-shift 2
-pp=TRUE
-cp ${z}.pp ${z}.pp.back
-Zpp=$(grep Z\ val ${z}.pp | cut -d'!' -f1)
-#el valor de Z esta en la linea 18
-head -17 $z.pp > aux
-echo '   '$Zpp_new'                     ! Z val' >> aux
-tail -$(($(wc -l  ${z}.pp | cut -d' ' -f1)-18)) ${z}.pp >>  aux
-cp aux ${z}.pp
-fi
+
+if [[ $i == '-ionPP1' ]] ; then pp=TRUE; ionPP1=TRUE; Zpp_new=$2 ; shift 2;  fi
+if [[ $i == '-ionPP2' ]] ; then pp=TRUE; ionPP2=TRUE; Zpp_new=$2 ; shift 2;  fi
+if [[ $i == '-ionPP3' ]] ; then pp=TRUE; ionPP3=TRUE; Zpp_new=$2 ; shift 2;  fi
+if [[ $i == '-pp' ]] ; then pp=TRUE; Zpp_new=$2 ; shift 2;  fi
 
  
 if [[ $i == '-orb' ]]  
@@ -74,6 +70,32 @@ if [[ $i == '-v0' ]] ; then v0[$o]=$2 ; shift 2 ; fi
 done
 
 
+# metemos dos parametros mas PP Z_pp ! no poner antes de leer Z
+if [[ $pp == 'TRUE' ]]
+then
+cp ${z}.pp ${z}.pp.back
+Zpp=$(grep Z\ val ${z}.pp | cut -d'!' -f1)
+#el valor de Z esta en la linea 18
+head -17 $z.pp > aux
+echo '   '$Zpp_new'                     ! Z val' >> aux
+tail -$(($(wc -l  ${z}.pp | cut -d' ' -f1)-18)) ${z}.pp >>  aux
+cp aux ${z}.pp
+fi
+
+
+if [[ $ionPP1 == 'TRUE' ||  $ionPP2 == 'TRUE' ||  $ionPP3 == 'TRUE' ]]
+then
+a="-z $z -ele $ele -mass $mass -ex $ex"
+  for((i=1;i<=$o;i++))
+  do
+  a=$a" -orb ${orb[i]} -n ${n[i]} -n0 ${n0[i]} -r ${r[i]}"
+  done
+echo $ionPP1 $ionPP2 $ionPP3 >> log
+cp ${z}.pp.back  ${z}.pp
+./${0} $a -pp $Zpp_new
+rm -fr cinput.ion
+mv cinput cinput.ion
+fi
 
 
 # El ion solo esta pensado para spd sin potencial confinante ni tolerancias
@@ -90,12 +112,14 @@ j=2
 a=$a" -orb ${orb[j]} -n ${ionp[k]} -n0 ${n0[j]} -r ${r[j]}"
 j=3
 a=$a" -orb ${orb[j]} -n ${iond[k]} -n0 ${n0[j]} -r ${r[j]}"
- echo $a >> log 
+echo $a >> log 
+echo ion >> log
 ./${0} $a
  rm -fr cinput.ion
  mv cinput cinput.ion
 fi
 done
+
 
 
 function initial {
@@ -369,13 +393,17 @@ then
 fi
 done
 
+
+if [[ $ionPP1 == 'TRUE' ]]; then cp cinput.ion/*wf1 cinput/ ;fi
+if [[ $ionPP2 == 'TRUE' ]]; then cp cinput.ion/*wf2 cinput/ ;fi
+if [[ $ionPP3 == 'TRUE' ]]; then cp cinput.ion/*wf3 cinput/ ;fi
+
+
 cd begin_vnn/
 mv ../cinput/* .
 
-if [[ $pp = TRUE ]]
-then
-cp ../${z}.pp.back ${z}.pp
-fi
+if [[ $pp = TRUE ]] ; then cp ../${z}.pp.back ${z}.pp ;fi
+
 
 if [[  $opEXC == 4 ]] 
 then
