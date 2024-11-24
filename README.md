@@ -1,1 +1,1 @@
-git clone https://github.com/fireball-QMD/begin
+git clone git@github.com:fireball-QMD/begin.git
